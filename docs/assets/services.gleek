@@ -1,0 +1,46 @@
+API Gateway
+
+API Gateway --> Auth service
+API Gateway --> Profile service
+API Gateway --> Friend service
+API Gateway --> Message stream service
+
+/g Auth
+	Auth service
+	Auth:db
+
+user_created:queue
+Auth service --> user_created
+
+/g Profile
+	Profile service
+	Profile:db
+
+user_created --> Profile service
+
+Content service --> S3:hexagon
+
+Content service --> avatar_uploaded:queue
+
+avatar_uploaded --> Profile service
+
+Profile service --> user_updated:queue
+
+/g Friend
+	Friend service
+	Friend:db
+
+user_created --> Friend service
+user_updated --> Friend service
+
+Friend service --> notification:queue
+
+notification --> Notification service
+
+/g Message stream
+	Message stream service
+	PubSub:queue
+	Message cache:class
+	Message stream:db
+
+Message stream service --> notification
