@@ -1,0 +1,69 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: auth-app-v2
+  labels:
+    app: auth-app-v2
+spec:
+  containers:
+    - name: auth-app-v2
+      image: docker.io/library/taupatupatu-auth:v2
+      imagePullPolicy: "Never" # for local in minikube
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "250m"
+        limits:
+          memory: "1024Mi"
+          cpu: "1000m"
+      ports:
+      - containerPort: 8081
+      startupProbe:
+        httpGet:
+          path: /health
+          port: 8081
+        failureThreshold: 30
+        periodSeconds: 10
+      livenessProbe:
+        tcpSocket:
+          port: 8081
+        initialDelaySeconds: 15
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+          path: /readiness
+          port: 8081
+        initialDelaySeconds: 15
+        periodSeconds: 10
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: auth-service-v2
+spec:
+  selector:
+    app: auth-app-v2
+  ports:
+    - port: 8081
+      targetPort: 8081
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-ingress-canary
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "50"
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /auth/(.*)
+            backend:
+              service:
+                name: auth-service-v2
+                port:
+                  number: 8081
+---

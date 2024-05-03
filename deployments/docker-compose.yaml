@@ -1,0 +1,49 @@
+services:
+  auth:
+    build:
+      context: ../auth
+      dockerfile: ./deployments/Dockerfile
+    image: taupatupatu-auth
+    container_name: taupatupatu-auth
+    ports:
+      - "8081:8081"
+  content:
+    build:
+      context: ../content
+      dockerfile: ./deployments/Dockerfile
+    image: taupatupatu-content
+    container_name: taupatupatu-content
+    ports:
+      - "8082:8082"
+  friends:
+    build:
+      context: ../friends
+      dockerfile: ./deployments/Dockerfile
+    image: taupatupatu-friends
+    container_name: taupatupatu-friends
+    ports:
+      - "8083:8083"
+  messaging:
+    build:
+      context: ../messaging
+      dockerfile: ./deployments/Dockerfile
+    image: taupatupatu-messaging
+    container_name: taupatupatu-messaging
+    ports:
+      - "8084:8084"
+  notifications:
+    build:
+      context: ../notifications
+      dockerfile: ./deployments/Dockerfile
+    image: taupatupatu-notifications
+    container_name: taupatupatu-notifications
+    ports:
+      - "8085:8085"
+  profile:
+    build:
+      context: ../profile
+      dockerfile: ./deployments/Dockerfile
+    image: taupatupatu-profile
+    container_name: taupatupatu-profile
+    ports:
+      - "8086:8086"
